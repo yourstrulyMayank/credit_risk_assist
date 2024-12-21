@@ -17,6 +17,7 @@
             align-items: center;
             padding: 10px 20px;
             background-color: #0071e3;
+            position: relative; /* Added to ensure it stays on top */
         }
 
         header img {
@@ -29,6 +30,7 @@
             text-align: left;
             padding: 10px 20px;
             background-color: #005bb5;
+            position: relative;
         }
 
         nav a {
@@ -52,6 +54,9 @@
             text-align: center;
             padding: 20px;
             margin-top: 20px;
+            margin-left: 20%; /* Adjust for left sidebar */
+            margin-right: 20%; /* Adjust for right sidebar */
+            padding: 20px;
         }
 
         input[type="text"] {
@@ -89,10 +94,10 @@
         }
 
         .sidebar {
-            position: fixed;
-            top: 108px;
-            height: calc(100% - 120px);
-            width: 15%;
+            position: relative;
+            top: 0px;
+            bottom: 0;            
+            width: 15%;             
             background-color: #A7C7E7;
             color: #3a3a3a;
             padding: 20px;
@@ -100,12 +105,14 @@
         }
 
         .sidebar.left {
-            left: 0;
+            float: left;
+            height: 100vh;
         }
 
         .sidebar.right {
-            right: 0;
-            
+            float: right;
+            top: 30px;
+            right: 10px;
         }
 
         .sidebar h2 {
@@ -150,12 +157,12 @@
 
         .table-layout {
             display: none;
+            width: 80%;  /* Increase the width of the table */
+            margin: 0 auto;  /* Center the table */
         }
 
         .table-layout table {
-            margin: 20px auto;
-            border-collapse: collapse;
-            width: 60%; /* Keep the table width as before */
+            width: 100%;  /* Full width within the container */
         }
         
         .table-layout th, .table-layout td {
@@ -221,7 +228,17 @@
             {% endfor %}
         </ul>
     </div>
-
+    <!-- Sidebar for Suggested Questions -->
+    <div class="sidebar right">
+        <h2>Suggested Questions</h2>
+        <ul align="left">
+            <li><a href="#">What is credit risk?</a></li>
+            <li><a href="#">How do I calculate my credit score?</a></li>
+            <li><a href="#">What factors impact loan approval?</a></li>
+            <li><a href="#">How can I reduce credit card debt?</a></li>
+            <li><a href="#">What is a debt-to-income ratio?</a></li>
+        </ul>
+    </div>
     <!-- Main Content -->
     <div class="container">
         <button id="toggle-layout" class="toggle-button">One</button>
@@ -275,17 +292,7 @@
     </div>
 
 
-    <!-- Sidebar for Suggested Questions -->
-    <div class="sidebar right">
-        <h2>Suggested Questions</h2>
-        <ul align="left">
-            <li><a href="#">What is credit risk?</a></li>
-            <li><a href="#">How do I calculate my credit score?</a></li>
-            <li><a href="#">What factors impact loan approval?</a></li>
-            <li><a href="#">How can I reduce credit card debt?</a></li>
-            <li><a href="#">What is a debt-to-income ratio?</a></li>
-        </ul>
-    </div>
+    
 
     <!-- Back to Home Button -->
     <a href="/" class="home-button">Back to Home</a>
