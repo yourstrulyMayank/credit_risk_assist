@@ -17,21 +17,14 @@ AVAILABLE_FILES_PATH = "utils\\files.txt"
 def main():
     return populate_database()
 
-def populate_database():
-    # Check if the database should be cleared (using the --clear flag).
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("--reset", action="store_true", help="Reset the database.")
-    # args = parser.parse_args()
-    # if args.reset:
-    #     print("✨ Clearing Database")
-    #     clear_database()
+def populate_database():  
 
     # Create (or update) the data store.
     documents = load_documents()        
-    add_file_to_list(documents[-1].metadata['source'].split('\\')[-1])
+    
     chunks = split_documents(documents)
-    add_file_to_list(len(chunks))
-    # add_to_chroma(chunks)
+    add_file_to_list(documents[-1].metadata['source'].split('\\')[-1], len(chunks))    
+    add_to_chroma(chunks)
 
 
 def load_documents():
@@ -107,19 +100,35 @@ def calculate_chunk_ids(chunks):
     return chunks
 
 
-# def clear_database():
-#     if os.path.exists(CHROMA_PATH):
-#         shutil.rmtree(CHROMA_PATH)
+def add_file_to_list(file_name, new_chunk_count):
+    """
+    Add the file name and chunk count difference to the available files list.
 
-def add_file_to_list(file_name):
-    # Add the file name to files.txt (comma-separated)
+    :param file_name: Name of the file being processed.
+    :param new_chunk_count: Number of chunks generated for the file.
+    """
+    previous_chunk_count = 0
+
     if os.path.exists(AVAILABLE_FILES_PATH):
-        with open(AVAILABLE_FILES_PATH, "a") as file:
-            file.write(f"{file_name},")
-    else:
-        with open(AVAILABLE_FILES_PATH, "w") as file:
-            file.write(f"{file_name},")
+        # Read the last line from the file to extract the previous chunk count.
+        with open(AVAILABLE_FILES_PATH, "r") as file:
+            lines = file.readlines()
+            if lines:
+                # Get the last line and extract the count (key:value format expected).
+                last_line = lines[-1].strip()
+                if last_line:
+                    try:
+                        _, prev_count = last_line.split(":")
+                        previous_chunk_count = int(prev_count)
+                    except ValueError:
+                        print("⚠️ Could not parse the previous chunk count, defaulting to 0.")
+    
+    # Calculate the chunk difference.
+    chunk_difference = new_chunk_count - previous_chunk_count
 
+    # Append the new file name and chunk count to the file.
+    with open(AVAILABLE_FILES_PATH, "a") as file:
+        file.write(f"{file_name}:{chunk_difference}\n")
 
 if __name__ == "__main__":
     main()

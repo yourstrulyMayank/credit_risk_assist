@@ -113,7 +113,9 @@
     <br>
     <a href="/query" class="button query">Query the Existing Knowledge Base</a>
     
-    <a href="/clear" class="button clear">Clear the Existing Knowledge Base</a>
+    <a href="#" class="button clear" id="clear-button" onclick="clearDatabase()">Clear the Existing Knowledge Base</a>
+    <br><br>
+    <p id="clear-status" style="margin-top: 10px; font-size: 16px; color: #333;"></p>
 
     
 
@@ -135,6 +137,38 @@
                 fileButton.textContent = "Upload";
                 fileButton.onclick = () => document.getElementById("upload-form").submit();
             }
+        }
+
+        function clearDatabase() {
+            const clearButton = document.getElementById("clear-button");
+            const clearStatus = document.getElementById("clear-status");
+    
+            // Change button text and show loading message
+            clearButton.textContent = "Clearing...";
+            clearButton.disabled = true;
+            clearStatus.textContent = "";
+    
+            // Send a request to clear the database
+            fetch("/clear_database", { method: "POST" })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error("Failed to clear the database");
+                })
+                .then(data => {
+                    if (data.success) {
+                        clearButton.textContent = "Clear the Existing Knowledge Base";
+                        clearStatus.textContent = "The knowledge base has been cleared!.";
+                    } else {
+                        throw new Error("Clear failed");
+                    }
+                })
+                .catch(error => {
+                    clearButton.textContent = "Clear the Existing Knowledge Base";
+                    clearButton.disabled = false;
+                    clearStatus.textContent = `Error: ${error.message}`;
+                });
         }
     </script>
 </body>

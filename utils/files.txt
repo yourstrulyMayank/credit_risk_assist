@@ -1,2 +1,2 @@
 ticket_to_ride.pdf:17
-monopoly.pdf:23
+ticket_to_ride.pdf:23

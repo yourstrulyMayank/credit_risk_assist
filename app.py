@@ -62,9 +62,13 @@ def batch_ask():
 def query():
     return redirect(url_for('ask'))  # Directly go to question-answering page
 
-@app.route('/clear', methods=['GET','POST'])
-def clear():
-    return clear_database.clear_database()
+@app.route('/clear_database', methods=['POST'])
+def clear_database_route():
+    try:
+        clear_database.clear_database()
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
 
 def run_populate_database():
     global processing_status
