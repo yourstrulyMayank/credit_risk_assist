@@ -313,7 +313,7 @@
             const tableBody = document.querySelector("#question-answer-table tbody");
             const addRowButton = document.getElementById("add-row");
             const generateButton = document.getElementById("generate");
-        
+    
             // Add a new row when the "+" button is clicked
             addRowButton.addEventListener("click", () => {
                 const newRow = document.createElement("tr");
@@ -323,28 +323,43 @@
                 `;
                 tableBody.appendChild(newRow);
             });
-        
-            // Generate answers one by one
+    
+            // Generate answers for all questions in the grid
             generateButton.addEventListener("click", async () => {
                 const rows = document.querySelectorAll("#question-answer-table tbody tr");
-                for (const row of rows) {
-                    const questionInput = row.querySelector(".question-input").value;
-                    const answerOutput = row.querySelector(".answer-output");
-        
-                    if (questionInput.trim()) {
-                        answerOutput.textContent = "Loading..."; // Show loading while fetching
-        
-                        try {
-                            const response = await fetch("/ask", {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({ question: questionInput }),
-                            });
-                            const result = await response.json();
-                            answerOutput.textContent = result.answer || "No answer available.";
-                        } catch (error) {
+                const questions = [];
+    
+                rows.forEach((row) => {
+                    const questionInput = row.querySelector(".question-input").value.trim();
+                    if (questionInput) questions.push(questionInput);
+                });
+    
+                if (questions.length > 0) {
+                    // Show loading indicators for all rows
+                    rows.forEach((row) => {
+                        const answerOutput = row.querySelector(".answer-output");
+                        answerOutput.textContent = "Loading...";
+                    });
+    
+                    try {
+                        // Send all questions to the backend
+                        const response = await fetch("/batch_ask", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ questions }),
+                        });
+    
+                        const results = await response.json();
+                        results.answers.forEach((answer, index) => {
+                            const row = rows[index];
+                            const answerOutput = row.querySelector(".answer-output");
+                            answerOutput.textContent = answer || "No answer available.";
+                        });
+                    } catch (error) {
+                        rows.forEach((row) => {
+                            const answerOutput = row.querySelector(".answer-output");
                             answerOutput.textContent = "Error fetching answer.";
-                        }
+                        });
                     }
                 }
             });

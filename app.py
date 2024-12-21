@@ -42,18 +42,18 @@ def ask():
             return render_template('ask.html', response=response)
     return render_template('ask.html')
 
-# @app.route('/batch_ask', methods=['POST'])
-# def batch_ask():
-#     data = request.json
-#     questions = data.get('questions', [])
-#     answers = []
+@app.route('/batch_ask', methods=['POST'])
+def batch_ask():
+    data = request.json
+    questions = data.get('questions', [])
+    answers = []
 
-#     # Process each question and append the response
-#     for question in questions:
-#         answer = query_rag(question)  # Replace with actual RAG logic
-#         answers.append(answer)
+    # Process each question and append the response
+    for question in questions:
+        answer = query_rag(question)  # Replace with actual RAG logic
+        answers.append(answer)
 
-#     return jsonify({"answers": answers})
+    return jsonify({"answers": answers})
 
 @app.route('/query', methods=['GET'])
 def query():
