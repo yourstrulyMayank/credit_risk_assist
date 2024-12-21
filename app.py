@@ -5,6 +5,7 @@ import time
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from query_data import query_rag
 import populate_database
+import clear_database
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'data'
@@ -34,13 +35,15 @@ def upload_file():
 
 @app.route('/ask', methods=['GET', 'POST'])
 def ask():
+    document_titles = load_file_titles()
     if request.method == 'POST':
         question = request.form.get('question')
         if question:
             # Process question using query_rag
             response = query_rag(question)  # Replace with actual RAG logic
-            return render_template('ask.html', response=response)
-    return render_template('ask.html')
+            return render_template('ask.html', response=response, document_titles=document_titles)
+    return render_template('ask.html', document_titles=document_titles)
+
 
 @app.route('/batch_ask', methods=['POST'])
 def batch_ask():
@@ -59,6 +62,10 @@ def batch_ask():
 def query():
     return redirect(url_for('ask'))  # Directly go to question-answering page
 
+@app.route('/clear', methods=['GET','POST'])
+def clear():
+    return clear_database.clear_database()
+
 def run_populate_database():
     global processing_status
     processing_status["complete"] = False
@@ -71,6 +78,17 @@ def run_populate_database():
 def check_status():
     return jsonify({"complete": processing_status["complete"]})
 
+def load_file_titles():
+    titles = []
+    try:
+        with open("utils/files.txt", "r") as file:
+            for line in file:
+                print(line)
+                key, _ = line.strip().split(":")
+                titles.append(key)
+    except FileNotFoundError:
+        pass
+    return titles
 
 if __name__ == '__main__':
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)

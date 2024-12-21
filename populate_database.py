@@ -8,28 +8,30 @@ from get_embedding_function import get_embedding_function
 # from langchain.vectorstores.chroma import Chroma
 # from langchain_community.vectorstores import Chroma
 from langchain_chroma import Chroma
-from langchain.document_loaders import PyPDFDirectoryLoader
+from langchain_community.document_loaders import PyPDFDirectoryLoader
 
 CHROMA_PATH = "chroma"
 DATA_PATH = "data"
-
+AVAILABLE_FILES_PATH = "utils\\files.txt"
 
 def main():
-    return populate_database
+    return populate_database()
 
 def populate_database():
     # Check if the database should be cleared (using the --clear flag).
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--reset", action="store_true", help="Reset the database.")
-    args = parser.parse_args()
-    if args.reset:
-        print("✨ Clearing Database")
-        clear_database()
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("--reset", action="store_true", help="Reset the database.")
+    # args = parser.parse_args()
+    # if args.reset:
+    #     print("✨ Clearing Database")
+    #     clear_database()
 
     # Create (or update) the data store.
-    documents = load_documents()
+    documents = load_documents()        
+    add_file_to_list(documents[-1].metadata['source'].split('\\')[-1])
     chunks = split_documents(documents)
-    add_to_chroma(chunks)
+    add_file_to_list(len(chunks))
+    # add_to_chroma(chunks)
 
 
 def load_documents():
@@ -105,9 +107,18 @@ def calculate_chunk_ids(chunks):
     return chunks
 
 
-def clear_database():
-    if os.path.exists(CHROMA_PATH):
-        shutil.rmtree(CHROMA_PATH)
+# def clear_database():
+#     if os.path.exists(CHROMA_PATH):
+#         shutil.rmtree(CHROMA_PATH)
+
+def add_file_to_list(file_name):
+    # Add the file name to files.txt (comma-separated)
+    if os.path.exists(AVAILABLE_FILES_PATH):
+        with open(AVAILABLE_FILES_PATH, "a") as file:
+            file.write(f"{file_name},")
+    else:
+        with open(AVAILABLE_FILES_PATH, "w") as file:
+            file.write(f"{file_name},")
 
 
 if __name__ == "__main__":
