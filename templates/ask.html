@@ -288,6 +288,8 @@
             </tbody>
         </table>
         <button id="add-row" class="button">+</button>
+        <button id="remove-row" class="button" onclick="document.getElementById(
+            'question-answer-table').deleteRow(1)">-</button>
         <button id="generate" class="button">Generate Answers</button>
     </div>
 
@@ -318,7 +320,7 @@
         // Generate answers functionality
         document.addEventListener("DOMContentLoaded", () => {
             const tableBody = document.querySelector("#question-answer-table tbody");
-            const addRowButton = document.getElementById("add-row");
+            const addRowButton = document.getElementById("add-row");            
             const generateButton = document.getElementById("generate");
     
             // Add a new row when the "+" button is clicked
@@ -330,7 +332,8 @@
                 `;
                 tableBody.appendChild(newRow);
             });
-    
+
+                
             // Generate answers for all questions in the grid
             generateButton.addEventListener("click", async () => {
                 const rows = document.querySelectorAll("#question-answer-table tbody tr");
