@@ -34,11 +34,11 @@
     </style>
     <script>
         function checkStatus() {
-            fetch('/check_status_upload')
+            fetch('/check_status_fetch')
                 .then(response => response.json())
                 .then(data => {
                     if (data.complete) {
-                        window.location.href = '/fetching_results'; 
+                        window.location.href = '/analyze';
                     } else {
                         setTimeout(checkStatus, 1000); // Retry after 1 second
                     }
@@ -50,7 +50,7 @@
     </script>
 </head>
 <body>
-    <h1>Processing your file...</h1>
-    <p>Please wait while we process your upload.</p>
+    <h1>Fetching Your Results...</h1>
+    <p>Please wait while we fetch your results.</p>
 </body>
 </html>
