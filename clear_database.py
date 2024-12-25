@@ -14,17 +14,27 @@ from langchain_community.document_loaders import PyPDFDirectoryLoader
 CHROMA_PATH = "chroma"
 AVAILABLE_FILES_PATH = "utils\\files.txt"
 
-def main():
-    print("✨ Clearing Database Main")
+def main():    
     return clear_database()
 
-def clear_database():
-    print("✨ Clearing Database")
-    if os.path.exists(CHROMA_PATH):
-        shutil.rmtree(CHROMA_PATH)
-    with open(AVAILABLE_FILES_PATH, "w") as file:
-        file.write("")
-    return True
+def clear_database(db):
+    try:
+        print("✨ Clearing Database")
+        ids_to_delete = db.get()["ids"]
+        print(ids_to_delete)
+        db.delete(ids=ids_to_delete)
+        # db._client._system.stop()
+        # SharedSystemClient._identifer_to_system.pop(vector_db._client._identifier, None)
+        # db = None
+        if os.path.exists(CHROMA_PATH):
+            shutil.rmtree(CHROMA_PATH)
+        with open(AVAILABLE_FILES_PATH, "w") as file:
+            file.write("")
+        return True
+    except Exception as e:
+        print(e)
+        return False
+    
 
 if __name__ == "__main__":
     main()

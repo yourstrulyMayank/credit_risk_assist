@@ -17,14 +17,14 @@ AVAILABLE_FILES_PATH = "utils\\files.txt"
 def main():
     return populate_database()
 
-def populate_database():  
+def populate_database(db):  
 
     # Create (or update) the data store.
     documents = load_documents()        
     
-    chunks = split_documents(documents)
-    add_file_to_list(documents[-1].metadata['source'].split('\\')[-1], len(chunks))    
-    add_to_chroma(chunks)
+    chunks = split_documents(documents)    
+    add_to_chroma(chunks, db)
+    add_file_to_list(db, documents[-1].metadata['source'].split('\\')[-1], len(chunks))    
 
 
 def load_documents():
@@ -42,11 +42,11 @@ def split_documents(documents: list[Document]):
     return text_splitter.split_documents(documents)
 
 
-def add_to_chroma(chunks: list[Document]):
+def add_to_chroma(chunks: list[Document], db):
     # Load the existing database.
-    db = Chroma(
-        persist_directory=CHROMA_PATH, embedding_function=get_embedding_function()
-    )
+    # db = Chroma(
+    #     persist_directory=CHROMA_PATH, embedding_function=get_embedding_function()
+    # )
 
     # Calculate Page IDs.
     chunks_with_ids = calculate_chunk_ids(chunks)
@@ -100,35 +100,62 @@ def calculate_chunk_ids(chunks):
     return chunks
 
 
-def add_file_to_list(file_name, new_chunk_count):
+# def add_file_to_list(file_name, new_chunk_count):
+#     """
+#     Add the file name and chunk count difference to the available files list.
+
+#     :param file_name: Name of the file being processed.
+#     :param new_chunk_count: Number of chunks generated for the file.
+#     """
+#     previous_chunk_count = 0
+
+#     if os.path.exists(AVAILABLE_FILES_PATH):
+#         # Read the last line from the file to extract the previous chunk count.
+#         with open(AVAILABLE_FILES_PATH, "r") as file:
+#             lines = file.readlines()
+#             if lines:
+#                 # Get the last line and extract the count (key:value format expected).
+#                 last_line = lines[-1].strip()
+#                 if last_line:
+#                     try:
+#                         _, prev_count = last_line.split(":")
+#                         previous_chunk_count = int(prev_count)
+#                     except ValueError:
+#                         print("⚠️ Could not parse the previous chunk count, defaulting to 0.")
+    
+#     # Calculate the chunk difference.
+#     chunk_difference = new_chunk_count - previous_chunk_count
+
+#     # Append the new file name and chunk count to the file.
+#     with open(AVAILABLE_FILES_PATH, "a") as file:
+#         file.write(f"{file_name}:{chunk_difference}\n")
+
+def add_file_to_list(db, file_name, new_chunk_count):
+    print("Here in adding file to list")
     """
     Add the file name and chunk count difference to the available files list.
 
+    :param db: Chroma database instance.
     :param file_name: Name of the file being processed.
     :param new_chunk_count: Number of chunks generated for the file.
     """
-    previous_chunk_count = 0
+    # Fetch existing chunks for the file from the database.
+    existing_items = db.get(include=["metadatas", "documents"])  # Use "metadatas"
+    print(existing_items)
+    existing_chunks = [
+    doc for doc, metadata in zip(existing_items["documents"], existing_items["metadatas"]) 
+    if metadata["source"] == file_name]
 
-    if os.path.exists(AVAILABLE_FILES_PATH):
-        # Read the last line from the file to extract the previous chunk count.
-        with open(AVAILABLE_FILES_PATH, "r") as file:
-            lines = file.readlines()
-            if lines:
-                # Get the last line and extract the count (key:value format expected).
-                last_line = lines[-1].strip()
-                if last_line:
-                    try:
-                        _, prev_count = last_line.split(":")
-                        previous_chunk_count = int(prev_count)
-                    except ValueError:
-                        print("⚠️ Could not parse the previous chunk count, defaulting to 0.")
-    
-    # Calculate the chunk difference.
-    chunk_difference = new_chunk_count - previous_chunk_count
 
-    # Append the new file name and chunk count to the file.
+    # Count existing chunks for the given file.
+    existing_chunk_count = len(existing_chunks)
+    chunk_difference = new_chunk_count - existing_chunk_count
+
+    # Append the new file name and chunk count to the file list.
     with open(AVAILABLE_FILES_PATH, "a") as file:
         file.write(f"{file_name}:{chunk_difference}\n")
+
+    print(f"✅ Updated file list for {file_name} with {chunk_difference} new chunks.")
 
 if __name__ == "__main__":
     main()
