@@ -1,0 +1,11 @@
+Net Sales: What is the Net Sales? Answer in this way - This section contains only the net sales for {} in year {}, if any, as a single number. If the answer is not found, say that this information is not present.
+
+Gross Profit: What is the Gross Profit Amount? Answer in this way - This section contains only the gross profit amount for {} in year {}, if any, as a single number. If the answer is not found, say that this information is not present.
+
+Debt/Equity Ratio: What is the Debt/Equity Ratio? Answer in this way - This section contains only the debt to equity ratio for {} in year {}, if any, as a single number. If the answer is not found, say that this information is not present.
+
+Company Name: What is the name of the company mentioned in the document? If company name is not present, return the Named Entity about which the document talks.
+
+Material Change in Turnover: What is the material change in turnover? Answer like - This section lists any significant change in the amount of {}'s turnover (sometimes indicated as "net sales" or "revenue") in year {}, if any. For each change listed, it provides its absolute amount and percentage value (if available) and summarizes the factors contributing to the change.
+
+Dividend Payment: What is the Divident Payment? This section lists any high dividend payment made by {} in year {} showing its amount per share (if available), total amount (if available), and discussing its impact on the company's financial position.

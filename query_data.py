@@ -63,13 +63,13 @@ def query_rag(query_text: str, db, model):
 
 def query_rag_latest(query_text: str, db, model, latest_file):
     PROMPT_TEMPLATE = """
-    Answer the question based only on the following context:
+    You are an AI assistant. Answer the question based only on the following context:
 
     {context}
 
     ---
 
-    Answer the question based on the above context: {question} and only search the file: {filename}
+    Answer the question truthfully, strictly based on the above context. The question will also tell you how to answer: {question} and only search the file: {filename}. If the answer cannot be found, say that this information is not present in the document.
     """
     # Prepare the DB.
     # embedding_function = get_embedding_function()
@@ -88,7 +88,7 @@ def query_rag_latest(query_text: str, db, model, latest_file):
 
     sources = [doc.metadata.get("id", None) for doc, _score in results]
     formatted_response = f"Response: {response_text}\nSources: {sources}"
-    print(formatted_response)
+    # print(formatted_response)
     return response_text
 
 

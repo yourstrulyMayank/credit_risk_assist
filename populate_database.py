@@ -12,6 +12,7 @@ from langchain_community.document_loaders import PyPDFDirectoryLoader
 
 CHROMA_PATH = "chroma"
 DATA_PATH = "data"
+NEW_DATA_PATH = "data\\new"
 AVAILABLE_FILES_PATH = "utils\\files.txt"
 
 def main():
@@ -23,12 +24,20 @@ def populate_database(db):
     documents = load_documents()        
     
     chunks = split_documents(documents)    
+    print("Adding to Database")
     add_to_chroma(chunks, db)
+    print("Added to Database")
     add_file_to_list(db, documents[-1].metadata['source'].split('\\')[-1], len(chunks))    
+    print("Added file to list")
+    for filename in os.listdir(NEW_DATA_PATH):
+        src = os.path.join(NEW_DATA_PATH, filename)
+        dest = os.path.join(DATA_PATH, filename)
+        shutil.move(src, dest)
+    print(f"All files moved from {NEW_DATA_PATH} to {DATA_PATH}")
 
 
 def load_documents():
-    document_loader = PyPDFDirectoryLoader(DATA_PATH)
+    document_loader = PyPDFDirectoryLoader(NEW_DATA_PATH)
     return document_loader.load()
 
 
@@ -141,7 +150,7 @@ def add_file_to_list(db, file_name, new_chunk_count):
     """
     # Fetch existing chunks for the file from the database.
     existing_items = db.get(include=["metadatas", "documents"])  # Use "metadatas"
-    print(existing_items)
+    # print(existing_items)
     existing_chunks = [
     doc for doc, metadata in zip(existing_items["documents"], existing_items["metadatas"]) 
     if metadata["source"] == file_name]

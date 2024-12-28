@@ -21,7 +21,7 @@ def clear_database(db):
     try:
         print("✨ Clearing Database")
         ids_to_delete = db.get()["ids"]
-        print(ids_to_delete)
+        print(ids_to_delete)        
         db.delete(ids=ids_to_delete)
         # db._client._system.stop()
         # SharedSystemClient._identifer_to_system.pop(vector_db._client._identifier, None)

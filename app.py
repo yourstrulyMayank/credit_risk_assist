@@ -9,9 +9,10 @@ from langchain_chroma import Chroma
 from langchain_ollama import OllamaLLM as Ollama
 
 app = Flask(__name__)
-UPLOAD_FOLDER = 'data'
+UPLOAD_FOLDER = 'data\\new'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 CHROMA_PATH = "chroma"
+PROMPTS_FILE_PATH = "utils//prompts.txt"
 processing_status_upload = {"complete": False}
 processing_status_fetch = {"complete": False}
 
@@ -69,17 +70,23 @@ def batch_ask():
 
 
 @app.route('/clear_database', methods=['GET','POST'])
-def clear_database_route():
-    ids_to_delete = db.get()["ids"]
-    print(ids_to_delete) 
-    try:
-               
-        if clear_database.clear_database(db) == True:
+def clear_database_route():    
+    
+    try:               
+        if clear_database.clear_database(db):
+            # embedding_function = get_embedding_function()
+            # db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embedding_function)
+            # model = Ollama(model="mistral")
             return jsonify({"success": True})
         else:
             return jsonify({"success": False})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
+
+def restart_flask_app():
+    """Restart the Flask application programmatically."""
+    print("Restarting Flask application...")
+    os.execv(sys.executable, ['python'] + sys.argv)
 
 
 def run_populate_database():
@@ -115,6 +122,18 @@ def load_file_titles():
         pass
     return titles
 
+def load_prompts(file_path):
+    """
+    Load prompts from a text file and return as a dictionary.
+    """
+    prompts = {}
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as f:
+            for line in f:
+                if ":" in line:
+                    key, value = line.strip().split(":", 1)
+                    prompts[key.strip()] = value.strip()
+    return prompts
 
 @app.route('/fetching_results', methods=['GET'])
 def fetching_results():
@@ -124,12 +143,12 @@ def fetching_results():
     return render_template('fetching_results.html')
 
 
-prepopulated_questions = {
-    "Net Sales": "What is the Net Sales?",
-    "Gross Profit": "What is the Gross Profit?",
-    "Debt/Equity Ratio": "What is the Debt/Equity Ratio?",
-    "Company Name": "What is the name of the company mentioned in the document?"
-}
+# prepopulated_questions = {
+#     "Net Sales": "What is the Net Sales?",
+#     "Gross Profit": "What is the Gross Profit?",
+#     "Debt/Equity Ratio": "What is the Debt/Equity Ratio?",
+#     "Company Name": "What is the name of the company mentioned in the document?"
+# }
 
 fetched_results = {}  # Store results globally for simplicity
 
@@ -198,6 +217,8 @@ def run_query_database():
 
     # Simulate querying the database for each prepopulated question
     results = {}
+    prepopulated_questions = load_prompts(PROMPTS_FILE_PATH)
+    print(prepopulated_questions)
     for key, question in prepopulated_questions.items():
         results[key] = query_vector_db(question, db, model, latest_file)
 
