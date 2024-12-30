@@ -43,6 +43,7 @@ def load_documents():
 
 def split_documents(documents: list[Document]):
     text_splitter = RecursiveCharacterTextSplitter(
+        separators=["\n\n", "\n", " "],  # Preserve table rows
         chunk_size=800,
         chunk_overlap=80,
         length_function=len,

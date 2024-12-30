@@ -26,8 +26,8 @@ def clear_database(db):
         # db._client._system.stop()
         # SharedSystemClient._identifer_to_system.pop(vector_db._client._identifier, None)
         # db = None
-        if os.path.exists(CHROMA_PATH):
-            shutil.rmtree(CHROMA_PATH)
+        # if os.path.exists(CHROMA_PATH):
+        #     shutil.rmtree(CHROMA_PATH)
         with open(AVAILABLE_FILES_PATH, "w") as file:
             file.write("")
         return True

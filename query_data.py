@@ -76,6 +76,8 @@ def query_rag_latest(query_text: str, db, model, latest_file):
     
     Instructions:
     - If the answer is present in the context, provide it clearly and concisely.
+    - Treat tabular data carefully and preserve its structure.
+    - If the answer is found within a table, specify the relevant row(s) and column(s).
     - If the answer is not found in the context, respond exactly with "Not Specified In The Document".
     """
     # Prepare the DB.
