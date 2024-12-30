@@ -63,13 +63,20 @@ def query_rag(query_text: str, db, model):
 
 def query_rag_latest(query_text: str, db, model, latest_file):
     PROMPT_TEMPLATE = """
-    You are an AI assistant. Answer the question based only on the following context:
+    You are an AI assistant. Your task is to answer the given question truthfully and strictly based on the provided context.
 
+    Context:
     {context}
 
     ---
-
-    Answer the question truthfully, strictly based on the above context. The question will also tell you how to answer: {question} and only search the file: {filename}. If the answer cannot be found, say that this information is not present in the document.
+    
+    Question: {question}
+    
+    File to search: {filename}
+    
+    Instructions:
+    - If the answer is present in the context, provide it clearly and concisely.
+    - If the answer is not found in the context, respond exactly with "Not Specified In The Document".
     """
     # Prepare the DB.
     # embedding_function = get_embedding_function()

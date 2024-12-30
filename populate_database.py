@@ -109,36 +109,6 @@ def calculate_chunk_ids(chunks):
     return chunks
 
 
-# def add_file_to_list(file_name, new_chunk_count):
-#     """
-#     Add the file name and chunk count difference to the available files list.
-
-#     :param file_name: Name of the file being processed.
-#     :param new_chunk_count: Number of chunks generated for the file.
-#     """
-#     previous_chunk_count = 0
-
-#     if os.path.exists(AVAILABLE_FILES_PATH):
-#         # Read the last line from the file to extract the previous chunk count.
-#         with open(AVAILABLE_FILES_PATH, "r") as file:
-#             lines = file.readlines()
-#             if lines:
-#                 # Get the last line and extract the count (key:value format expected).
-#                 last_line = lines[-1].strip()
-#                 if last_line:
-#                     try:
-#                         _, prev_count = last_line.split(":")
-#                         previous_chunk_count = int(prev_count)
-#                     except ValueError:
-#                         print("⚠️ Could not parse the previous chunk count, defaulting to 0.")
-    
-#     # Calculate the chunk difference.
-#     chunk_difference = new_chunk_count - previous_chunk_count
-
-#     # Append the new file name and chunk count to the file.
-#     with open(AVAILABLE_FILES_PATH, "a") as file:
-#         file.write(f"{file_name}:{chunk_difference}\n")
-
 def add_file_to_list(db, file_name, new_chunk_count):
     print("Here in adding file to list")
     """

@@ -9,3 +9,5 @@ Company Name: What is the name of the company mentioned in the document? If comp
 Material Change in Turnover: What is the material change in turnover? Answer like - This section lists any significant change in the amount of {}'s turnover (sometimes indicated as "net sales" or "revenue") in year {}, if any. For each change listed, it provides its absolute amount and percentage value (if available) and summarizes the factors contributing to the change.
 
 Dividend Payment: What is the Divident Payment? This section lists any high dividend payment made by {} in year {} showing its amount per share (if available), total amount (if available), and discussing its impact on the company's financial position.
+
+Fixed Assets: How much are the fixed assets? This section lists and analyzes any significant change in fixed assets for {} in year {}. For each change, it discusses the nature and the magnitude of the change (if known), describes the assets involved, and how the change contributes to the company's growth.
