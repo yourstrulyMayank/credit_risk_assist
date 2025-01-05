@@ -10,3 +10,10 @@ boto3
 langchain-community
 langchain_ollama
 langchain_chroma
+filetype
+pypdf2
+pytesseract
+fpdf
+pillow
+pdf2image
+poppler-utils

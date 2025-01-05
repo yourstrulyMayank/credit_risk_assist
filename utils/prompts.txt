@@ -1,13 +1,15 @@
-Net Sales: What is the Net Sales? Answer in this way - This section contains only the net sales for {} in year {}, if any, as a single number. If the answer is not found, say that this information is not present.
+Net Sales: What is the Net Sales for the latest year? If you don't find Net Sales, try to search for relevant fields that tell about Sales or Revenue.
 
-Gross Profit: What is the Gross Profit Amount? Answer in this way - This section contains only the gross profit amount for {} in year {}, if any, as a single number. If the answer is not found, say that this information is not present.
+Gross Profit: What is the Gross Profit Amount for the latest year? If you don't find Net Sales, try to search for relevant fields that tell about profit.
 
-Debt/Equity Ratio: What is the Debt/Equity Ratio? Answer in this way - This section contains only the debt to equity ratio for {} in year {}, if any, as a single number. If the answer is not found, say that this information is not present.
+Debt/Equity Ratio: What is the Debt/Equity Ratio for the latest year? 
 
 Company Name: What is the name of the company mentioned in the document? If company name is not present, just state that Company Name is not mentioned in the document.
 
-Material Change in Turnover: What is the material change in turnover? Answer like - This section lists any significant change in the amount of {}'s turnover (sometimes indicated as "net sales" or "revenue") in year {}, if any. For each change listed, it provides its absolute amount and percentage value (if available) and summarizes the factors contributing to the change.
+Long Term Liabilities: What are the long term liabilities for the latest year?
 
-Dividend Payment: What is the Divident Payment? This section lists any high dividend payment made by {} in year {} showing its amount per share (if available), total amount (if available), and discussing its impact on the company's financial position.
+Dividend Payment: What is the Divident Payment for the latest year? 
 
-Fixed Assets: How much are the fixed assets? This section lists and analyzes any significant change in fixed assets for {} in year {}. For each change, it discusses the nature and the magnitude of the change (if known), describes the assets involved, and how the change contributes to the company's growth.
+Earnings per Share: What is the earnings per share for the latest year?
+
+Total Assets: How much are the total assets for the latest year?

@@ -1,6 +1,8 @@
 import argparse
 import os
 import shutil
+import filetype
+from PyPDF2 import PdfReader
 # from langchain.document_loaders.pdf import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
@@ -9,6 +11,8 @@ from get_embedding_function import get_embedding_function
 # from langchain_community.vectorstores import Chroma
 from langchain_chroma import Chroma
 from langchain_community.document_loaders import PyPDFDirectoryLoader
+from load_images import process_images_to_pdf
+
 
 CHROMA_PATH = "chroma"
 DATA_PATH = "data"
@@ -36,9 +40,48 @@ def populate_database(db):
     print(f"All files moved from {NEW_DATA_PATH} to {DATA_PATH}")
 
 
+# def load_documents():
+#     document_loader = PyPDFDirectoryLoader(NEW_DATA_PATH)
+#     return document_loader.load()
 def load_documents():
     document_loader = PyPDFDirectoryLoader(NEW_DATA_PATH)
+    
+    for filename in os.listdir(NEW_DATA_PATH):
+        file_path = os.path.join(NEW_DATA_PATH, filename)
+        
+        # Check file type
+        if filename.endswith('.pdf'):
+            if is_text_pdf(file_path):
+                print(f"Text-based PDF detected: {filename}. No further processing required.")
+            else:
+                print(f"Image-based PDF detected: {filename}. Processing with OCR.")
+                process_images_to_pdf(file_path)
+                os.remove(file_path)  # Remove the original image-based PDF after processing
+        elif is_image_file(file_path):
+            print(f"Image file detected: {filename}. Processing with OCR.")
+            process_images_to_pdf(file_path)
+            os.remove(file_path)  # Remove the original image after processing
+
+    # After processing, load all documents from NEW_DATA_PATH
+    print("Loading all text-based PDFs in NEW_DATA_PATH.")
     return document_loader.load()
+
+
+def is_text_pdf(file_path):
+    try:
+        with open(file_path, "rb") as f:
+            reader = PdfReader(f)
+            for page in reader.pages:
+                if page.extract_text():
+                    return True
+        return False
+    except Exception as e:
+        print(f"Error reading PDF {file_path}: {e}")
+        return False
+
+def is_image_file(file_path):
+    kind = filetype.guess(file_path)
+    return kind and kind.mime.startswith("image/")
 
 
 def split_documents(documents: list[Document]):
