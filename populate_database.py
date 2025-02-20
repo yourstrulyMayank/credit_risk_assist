@@ -23,21 +23,37 @@ def main():
     return populate_database()
 
 def populate_database(db):  
-
-    # Create (or update) the data store.
-    documents = load_documents()        
+    # Load new documents
+    documents = load_documents()
     
+    if not documents:
+        print("No new documents found.")
+        return
+
+    # Get the source filenames from the new documents
+    new_sources = {doc.metadata['source'].split('\\')[-1] for doc in documents}
+
+    # Remove old entries from the database
+    print("Removing old entries for re-uploaded documents...")
+    remove_existing_documents(db, new_sources)
+
+    # Split and add new chunks
     chunks = split_documents(documents)    
     print("Adding to Database")
     add_to_chroma(chunks, db)
     print("Added to Database")
+
+    # Update file list
     add_file_to_list(db, documents[-1].metadata['source'].split('\\')[-1], len(chunks))    
     print("Added file to list")
+
+    # Move processed files to permanent storage
     for filename in os.listdir(NEW_DATA_PATH):
         src = os.path.join(NEW_DATA_PATH, filename)
         dest = os.path.join(DATA_PATH, filename)
         shutil.move(src, dest)
     print(f"All files moved from {NEW_DATA_PATH} to {DATA_PATH}")
+
 
 
 # def load_documents():
@@ -179,6 +195,27 @@ def add_file_to_list(db, file_name, new_chunk_count):
         file.write(f"{file_name}:{chunk_difference}\n")
 
     print(f"✅ Updated file list for {file_name} with {chunk_difference} new chunks.")
+
+def remove_existing_documents(db, sources):
+    """
+    Remove all chunks related to the given source files from the Chroma database.
+
+    :param db: Chroma database instance.
+    :param sources: Set of filenames (source) to remove.
+    """
+    existing_items = db.get(include=["metadatas"])  # Get metadata from the DB
+    existing_ids = [
+        item_id for item_id, metadata in zip(existing_items["ids"], existing_items["metadatas"]) 
+        if metadata["source"].split('\\')[-1] in sources
+    ]
+
+    if existing_ids:
+        print(f"Deleting {len(existing_ids)} existing entries from the database...")
+        db.delete(existing_ids)
+        print("Old entries removed successfully.")
+    else:
+        print("No existing entries found for these documents.")
+
 
 if __name__ == "__main__":
     main()
